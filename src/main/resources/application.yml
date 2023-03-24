@@ -1,10 +1,5 @@
-redis:
-  host: localhost
-  port:
-caching:
-  spring:
-    hotelListTTL: 43200
 spring:
   redis:
     host: localhost
     port: 6379
+    expiration-time: 10

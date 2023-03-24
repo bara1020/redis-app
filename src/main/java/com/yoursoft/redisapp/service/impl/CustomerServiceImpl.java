@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yoursoft.redisapp.domain.Customer;
 import com.yoursoft.redisapp.dto.CustomerRequest;
 import com.yoursoft.redisapp.dto.CustomerResponse;
+import com.yoursoft.redisapp.exceptions.ResourceNotFoundException;
 import com.yoursoft.redisapp.repository.CustomerRepository;
 import com.yoursoft.redisapp.service.CustomerService;
 import com.yoursoft.redisapp.service.RedisUtility;
@@ -34,6 +35,7 @@ public class CustomerServiceImpl implements CustomerService{
             throws JsonProcessingException {
 
         Customer customer = redisUtility.getValue(id);
+
         if(customer != null){
             return Optional.of(modelMapper.map(customer, CustomerResponse.class));
         }
@@ -43,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService{
             return customerDbOptional.map(customerDb -> modelMapper.map(customerDb, CustomerResponse.class));
         }
 
-        return Optional.empty();
+        throw new ResourceNotFoundException("Customer", "id", id);
     }
 
     @Override
@@ -63,7 +65,19 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(String id) throws JsonProcessingException {
+
+        if(redisUtility.getValue(id) != null) {
+            deleteItem(id);
+        } else {
+            Optional<Customer> customer = customerRepository.findById(id);
+            if(customer.isEmpty())
+                throw new ResourceNotFoundException("Customer", "id", id);
+        }
+    }
+
+    private void deleteItem (String id){
         customerRepository.deleteById(id);
+        redisUtility.delete(id);
     }
 }

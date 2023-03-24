@@ -2,9 +2,9 @@ package com.yoursoft.redisapp.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yoursoft.redisapp.domain.Customer;
-import com.yoursoft.redisapp.dto.CustomerErrorReponse;
 import com.yoursoft.redisapp.dto.CustomerRequest;
 import com.yoursoft.redisapp.dto.CustomerResponse;
+import com.yoursoft.redisapp.exceptions.ResourceNotFoundException;
 import com.yoursoft.redisapp.service.CustomerService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -42,9 +42,10 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.save(customerRequest));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomer(
-            @PathVariable(value = "id") String id) {
+            @PathVariable(value = "id") String id)
+            throws JsonProcessingException {
         customerService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Customer deleted successly");
     }
@@ -55,7 +56,7 @@ public class CustomerController {
         logger.info("CustomerController: Fetching Customer with id {}", id);
         Optional<CustomerResponse> customerResponse = customerService.findById(id);
 
-        return customerResponse.isEmpty() ? ResponseEntity.ok().body(new CustomerErrorReponse("1-401","Cliente no encontrado"))
+        return customerResponse.isEmpty() ? ResponseEntity.ok().body( new ResourceNotFoundException("Customer", "id", id))
                 : ResponseEntity.ok().body(customerResponse);
     }
 

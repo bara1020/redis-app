@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface CustomerService {
 
 
-    void deleteById(String id);
+    void deleteById(String id) throws JsonProcessingException;
     CustomerResponse save(CustomerRequest customerRequest) throws JsonProcessingException;
     List<Customer> findAll();
     Optional<CustomerResponse> findById(String id) throws JsonProcessingException;

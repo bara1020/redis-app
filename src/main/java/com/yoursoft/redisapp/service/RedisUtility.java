@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,9 @@ public class RedisUtility {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Value("${spring.redis.expiration-time}")
+    private Integer expirationTime;
+
     @Autowired
     ObjectMapper objectMapper;
 
@@ -29,7 +33,7 @@ public class RedisUtility {
     public void setValue(final String key, Customer customer)
             throws JsonProcessingException {
         redisTemplate.opsForValue().set(key, objectMapper.writeValueAsString(customer));
-        redisTemplate.expire(key, 10, TimeUnit.MINUTES);
+        redisTemplate.expire(key, expirationTime, TimeUnit.MINUTES);
     }
 
     public Customer getValue(final String key)

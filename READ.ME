@@ -1,5 +1,18 @@
+# Contexto
+
 Este proyecto contiene una Rest Api que maneja el almacenamiento de caché en Redis, por ello para poder ejecutar una prueba, se debe ejecutar el servidor de Redis el cual se puede hacer montando un contenedor en Docker.
 
 Instructivo para creación de contenedor en Docker:
 
 https://redis.io/docs/stack/get-started/install/docker/
+
+# Configuración:
+
+En el archivo application.yml se encuentra los siguientes parametros:
+```
+spring:
+  redis:
+    host: localhost // Host donde se encuentra Redis
+    port: 6379 // Puerto por el cual se encuentra expuesto Redis
+    expiration-time: 10 // Tiempo de duración de la caché.
+```
