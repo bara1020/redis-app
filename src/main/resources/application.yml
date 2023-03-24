@@ -3,3 +3,7 @@ spring:
     host: localhost
     port: 6379
     expiration-time: 10
+
+springdoc:
+  api-docs:
+    path: /api-docs
